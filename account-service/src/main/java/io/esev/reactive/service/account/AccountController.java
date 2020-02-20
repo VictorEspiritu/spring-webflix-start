@@ -7,6 +7,7 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -45,12 +46,12 @@ public class AccountController {
                 .map(a -> new AccountDTO(a.getId(), a.getNumber(), a.getCustomerId(), a.getAmount()));
     }
 
-    @PostMapping("/customer")
+    @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
     public Mono<AccountDTO> create(@RequestBody Publisher<AccountDTO> account){
         logger.info("[SERVICE][ACCOUNT] create: {}", account);
 
         return repository.save(Mono.from(account).map(a -> new AccountEntity(a.getNumber(), a.getCustomerId(), a.getAmount())))
                 .map(a -> new AccountDTO(a.getId(), a.getNumber(), a.getCustomerId(), a.getAmount()));
     }
-
 }
